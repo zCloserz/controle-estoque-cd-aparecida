@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10243a">
+<title>Estoque CD Aparecida</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#172536;background:#f3f6fa;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:10px 14px;font-weight:650;background:#173b5e;color:white}button:hover{filter:brightness(1.08)}button.secondary{background:#e7edf4;color:#19334c}button.danger{background:#a83232}.top{background:#10243a;color:#fff;padding:20px clamp(16px,4vw,42px);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.top h1{font-size:20px;margin:0}.top p{margin:5px 0 0;color:#c5d3df;font-size:13px}.wrap{max-width:1280px;margin:auto;padding:24px clamp(14px,3vw,32px)}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}.nav button{background:#e2e9f0;color:#233b52}.nav button.active{background:#173b5e;color:white}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}.card,.panel{background:white;border:1px solid #e1e8ef;border-radius:14px;padding:16px;box-shadow:0 2px 8px #16324b08}.metric{font-size:26px;font-weight:750;margin-top:7px}.muted{color:#68798a;font-size:13px}.panel h2{font-size:17px;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}.field label{font-size:13px;font-weight:650;color:#40566b}.field input,.field select,.toolbar input,.toolbar select{width:100%;border:1px solid #ccd7e1;border-radius:8px;padding:10px;background:white;color:#172536}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}.toolbar input{max-width:330px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px;min-width:650px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #e8edf2}th{color:#5c6e7f;font-size:12px;background:#f8fafc}td strong{font-weight:700}.empty{text-align:center;color:#718092;padding:28px}.hidden{display:none!important}.tag{display:inline-block;border-radius:30px;background:#e9f2f9;color:#1c527c;padding:4px 8px;font-size:11px;font-weight:700}.notice{background:#fff8e6;border:1px solid #f0dfb4;padding:11px 13px;border-radius:9px;color:#70551a;font-size:13px;margin-bottom:16px}.status{font-size:12px;color:#6b7b8a;margin-top:14px}.foot{font-size:12px;color:#6c7b89;margin:18px 0}.section{display:none}.section.active{display:block}
+@media(max-width:800px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}@media(max-width:420px){.cards{grid-template-columns:1fr 1fr}.metric{font-size:22px}}
+</style>
+</head>
+<body>
+<header class="top"><div><h1>📦 Estoque CD Aparecida</h1><p>Controle de produtos, movimentações e conferência de saldos</p></div><span class="tag">Versão inicial · 1.0</span></header>
+<main class="wrap">
+<div class="notice"><strong>Atenção:</strong> esta versão salva os dados neste navegador e neste dispositivo. Ainda não há sincronização entre computadores ou usuários. Faça exportações de backup regularmente.</div>
+<nav class="nav" aria-label="Navegação">
+<button class="active" data-tab="painel">Painel</button><button data-tab="produtos">Produtos</button><button data-tab="movimentos">Movimentações</button><button data-tab="relatorios">Relatórios</button>
+</nav>
+<section id="painel" class="section active">
+<div class="cards">
+<div class="card"><div class="muted">Produtos cadastrados</div><div class="metric" id="kProdutos">0</div></div>
+<div class="card"><div class="muted">Unidades / quantidade em saldo*</div><div class="metric" id="kSaldo">0</div></div>
+<div class="card"><div class="muted">Entradas registradas</div><div class="metric" id="kEntradas">0</div></div>
+<div class="card"><div class="muted">Saídas registradas</div><div class="metric" id="kSaidas">0</div></div>
+</div>
+<div class="panel"><h2>Últimas movimentações</h2><div class="table-wrap"><table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Quantidade</th><th>Documento / observação</th></tr></thead><tbody id="ultimas"></tbody></table></div></div>
+<p class="foot">* Soma simples das quantidades cadastradas. Produtos em kg e unidades não são convertidos entre si.</p>
+</section>
+<section id="produtos" class="section">
+<div class="grid">
+<div class="panel"><h2>Cadastrar produto</h2>
+<form id="formProduto">
+<div class="field"><label for="codigo">Código</label><input id="codigo" maxlength="50" placeholder="Ex.: 1.03.01.001.00"></div>
+<div class="field"><label for="nome">Nome do produto *</label><input id="nome" required maxlength="120" placeholder="Nome do produto"></div>
+<div class="field"><label for="unidade">Unidade *</label><select id="unidade" required><option value="kg">kg</option><option value="un">unidade</option><option value="cx">caixa</option><option value="pct">pacote</option><option value="L">litro</option></select></div>
+<div class="field"><label for="minimo">Estoque mínimo (opcional)</label><input id="minimo" type="number" min="0" step="0.001" placeholder="0"></div>
+<button type="submit">Salvar produto</button>
+</form></div>
+<div class="panel"><h2>Produtos cadastrados</h2><div class="toolbar"><input id="buscaProduto" placeholder="Buscar por código ou nome..."></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Produto</th><th>Un.</th><th>Saldo</th><th>Ação</th></tr></thead><tbody id="listaProdutos"></tbody></table></div></div>
+</div>
+</section>
+<section id="movimentos" class="section">
+<div class="grid">
+<div class="panel"><h2>Registrar movimentação</h2>
+<form id="formMov">
+<div class="field"><label for="tipo">Tipo *</label><select id="tipo"><option value="entrada">Entrada</option><option value="saida">Saída</option><option value="ajuste">Ajuste de saldo</option></select></div>
+<div class="field"><label for="produtoMov">Produto *</label><select id="produtoMov" required></select></div>
+<div class="field"><label for="quantidade">Quantidade *</label><input id="quantidade" type="number" min="0.001" step="0.001" required placeholder="0,000"></div>
+<div class="field"><label for="dataMov">Data *</label><input id="dataMov" type="date" required></div>
+<div class="field"><label for="documento">Nota fiscal / documento</label><input id="documento" maxlength="100" placeholder="Número da NF ou transferência"></div>
+<div class="field"><label for="lote">Lote (opcional)</label><input id="lote" maxlength="80"></div>
+<div class="field"><label for="validade">Validade (opcional)</label><input id="validade" type="date"></div>
+<div class="field"><label for="obs">Observação</label><input id="obs" maxlength="250" placeholder="Ex.: transferência, conferência..."></div>
+<button type="submit">Registrar movimentação</button>
+</form></div>
+<div class="panel"><h2>Histórico</h2><div class="toolbar"><input id="buscaMov" placeholder="Buscar produto ou documento..."><select id="filtroTipo"><option value="">Todos os tipos</option><option value="entrada">Entradas</option><option value="saida">Saídas</option><option value="ajuste">Ajustes</option></select></div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Qtd.</th><th>Documento / observação</th></tr></thead><tbody id="listaMov"></tbody></table></div></div>
+</div>
+</section>
+<section id="relatorios" class="section">
+<div class="panel"><h2>Relatório de saldos</h2><div class="toolbar"><input id="buscaRel" placeholder="Filtrar produtos..."><button id="exportar">Exportar saldos CSV</button><button class="secondary" id="backup">Baixar backup JSON</button><label class="actions"><input type="file" id="restaurar" accept=".json,application/json" hidden><button class="secondary" type="button" id="btnRestaurar">Restaurar backup</button></label></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Produto</th><th>Un.</th><th>Saldo atual</th><th>Mínimo</th><th>Situação</th></tr></thead><tbody id="listaRel"></tbody></table></div></div>
+<div class="panel" style="margin-top:14px"><h2>Cuidados com os dados</h2><p class="muted">O saldo é calculado a partir do saldo inicial zero e das movimentações lançadas neste sistema. Antes de usar oficialmente, cadastre os produtos, confira o saldo físico e lance um ajuste inicial validado. Não use este protótipo como fonte única de dados fiscais ou contábeis.</p></div>
+</section>
+<div class="status" id="status" role="status">Pronto.</div>
+</main>
+<script>
+const KEY='cd-aparecida-v1';
+let db={products:[],moves:[]};
+const $=id=>document.getElementById(id);
+const today=new Date().toLocaleDateString('en-CA');
+$('dataMov').value=today;
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&Array.isArray(x.products)&&Array.isArray(x.moves))db=x}catch(e){console.warn(e)}}
+function save(msg='Dados salvos neste navegador.'){localStorage.setItem(KEY,JSON.stringify(db));$('status').textContent=msg;render()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function qty(n){return Number(n||0).toLocaleString('pt-BR',{maximumFractionDigits:3})}
+function product(id){return db.products.find(p=>p.id===id)}
+function balance(id){return db.moves.filter(m=>m.productId===id).reduce((s,m)=>s+(m.type==='entrada'?m.qty:m.type==='saida'?-m.qty:m.qty),0)}
+function typeName(t){return t==='entrada'?'Entrada':t==='saida'?'Saída':'Ajuste'}
+function render(){
+ const total=db.products.reduce((s,p)=>s+balance(p.id),0);
+ $('kProdutos').textContent=db.products.length;$('kSaldo').textContent=qty(total);
+ $('kEntradas').textContent=db.moves.filter(m=>m.type==='entrada').length;
+ $('kSaidas').textContent=db.moves.filter(m=>m.type==='saida').length;
+ const pOpts=db.products.map(p=>'<option value="'+p.id+'">'+esc(p.code?p.code+' — ':'')+esc(p.name)+'</option>').join('');
+ $('produtoMov').innerHTML=pOpts||'<option value="">Cadastre um produto primeiro</option>';
+ const q=$('buscaProduto').value.toLowerCase();
+ $('listaProdutos').innerHTML=db.products.filter(p=>(p.name+' '+p.code).toLowerCase().includes(q)).map(p=>'<tr><td>'+esc(p.code||'—')+'</td><td><strong>'+esc(p.name)+'</strong></td><td>'+esc(p.unit)+'</td><td>'+qty(balance(p.id))+'</td><td><button class="secondary" data-delete="'+p.id+'">Excluir</button></td></tr>').join('')||'<tr><td colspan="5" class="empty">Nenhum produto cadastrado.</td></tr>';
+ const mq=$('buscaMov').value.toLowerCase(), mt=$('filtroTipo').value;
+ const moves=[...db.moves].sort((a,b)=>b.date.localeCompare(a.date)||b.created-b.created);
+ const rows=moves.filter(m=>{const p=product(m.productId);return p&&(p.name+' '+p.code+' '+m.doc+' '+m.obs).toLowerCase().includes(mq)&&(!mt||m.type===mt)});
+ const html=arr=>arr.map(m=>{const p=product(m.productId);return '<tr><td>'+esc(m.date)+'</td><td>'+esc(p?.name||'Produto removido')+'</td><td><span class="tag">'+typeName(m.type)+'</span></td><td>'+qty(m.qty)+' '+esc(p?.unit||'')+'</td><td>'+esc([m.doc,m.lot,m.expiry,m.obs].filter(Boolean).join(' · ')||'—')+'</td></tr>'}).join('')||'<tr><td colspan="5" class="empty">Nenhuma movimentação encontrada.</td></tr>';
+ $('listaMov').innerHTML=html(rows);$('ultimas').innerHTML=html(moves.slice(0,6));
+ const rq=$('buscaRel').value.toLowerCase();
+ $('listaRel').innerHTML=db.products.filter(p=>(p.name+' '+p.code).toLowerCase().includes(rq)).map(p=>{const b=balance(p.id),low=p.min!==null&&p.min!==''&&b<=Number(p.min);return '<tr><td>'+esc(p.code||'—')+'</td><td>'+esc(p.name)+'</td><td>'+esc(p.unit)+'</td><td><strong>'+qty(b)+'</strong></td><td>'+ (p.min?qty(p.min):'—')+'</td><td>'+(low?'<span class="tag" style="background:#fff0e8;color:#9a431d">Abaixo do mínimo</span>':'<span class="tag">OK</span>')+'</td></tr>'}).join('')||'<tr><td colspan="6" class="empty">Nenhum produto cadastrado.</td></tr>';
+}
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));}));
+$('formProduto').addEventListener('submit',e=>{e.preventDefault();const name=$('nome').value.trim(),code=$('codigo').value.trim();if(db.products.some(p=>code&&p.code===code)){alert('Já existe um produto com esse código.');return}db.products.push({id:crypto.randomUUID(),code,name,unit:$('unidade').value,min:$('minimo').value||null});e.target.reset();save('Produto cadastrado.')});
+$('formMov').addEventListener('submit',e=>{e.preventDefault();const id=$('produtoMov').value,p=product(id),type=$('tipo').value,q=Number($('quantidade').value);if(!p){alert('Cadastre ou selecione um produto.');return}if(!Number.isFinite(q)||q<=0){alert('Informe uma quantidade válida.');return}if(type==='saida'&&q>balance(id)){alert('Saldo insuficiente. Saldo disponível: '+qty(balance(id))+' '+p.unit);return}if(type==='ajuste'){const target=q,current=balance(id);const delta=target-current;if(delta===0){alert('O saldo já corresponde à quantidade informada.');return}db.moves.push({id:crypto.randomUUID(),productId:id,type:'ajuste',qty:delta,date:$('dataMov').value,doc:$('documento').value.trim(),lot:$('lote').value.trim(),expiry:$('validade').value,obs:$('obs').value.trim()+' (ajuste para saldo informado)',created:Date.now()})}else db.moves.push({id:crypto.randomUUID(),productId:id,type,qty:q,date:$('dataMov').value,doc:$('documento').value.trim(),lot:$('lote').value.trim(),expiry:$('validade').value,obs:$('obs').value.trim(),created:Date.now()});e.target.reset();$('dataMov').value=today;save('Movimentação registrada.')});
+$('listaProdutos').addEventListener('click',e=>{const id=e.target.dataset.delete;if(!id)return;if(db.moves.some(m=>m.productId===id)){alert('Este produto possui movimentações. Não pode ser excluído para preservar o histórico.');return}if(confirm('Excluir este produto?')){db.products=db.products.filter(p=>p.id!==id);save('Produto excluído.')}});
+['buscaProduto','buscaMov','filtroTipo','buscaRel'].forEach(id=>$(id).addEventListener('input',render));
+function download(name,data,type){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([data],{type}));a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+$('exportar').addEventListener('click',()=>{const rows=[['Codigo','Produto','Unidade','Saldo','Minimo'],...db.products.map(p=>[p.code,p.name,p.unit,balance(p.id),p.min??''])];download('saldos-cd-aparecida.csv','\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n'),'text/csv;charset=utf-8')});
+$('backup').addEventListener('click',()=>download('backup-cd-aparecida.json',JSON.stringify(db,null,2),'application/json'));
+$('btnRestaurar').addEventListener('click',()=>$('restaurar').click());
+$('restaurar').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.products)||!Array.isArray(x.moves))throw Error();if(confirm('Restaurar substituirá os dados atuais deste navegador. Deseja continuar?')){db=x;save('Backup restaurado.')}}catch(err){alert('Arquivo de backup inválido.')}e.target.value=''});
+load();render();
+</script>
+</body></html>
