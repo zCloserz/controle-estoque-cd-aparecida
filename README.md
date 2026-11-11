@@ -1,6 +1,6 @@
 # Controle de Estoque — CD Aparecida
 
-Primeira versão do sistema web para cadastro de produtos, registro de entradas, saídas e ajustes, consulta de saldos e exportação de relatórios.
+Sistema web de controle de estoque para cadastro de produtos, entradas, saídas, ajustes, consulta de saldos e relatórios.
 
 ## Como usar
 1. Abra `index.html` no navegador ou publique o repositório com GitHub Pages.
@@ -15,6 +15,14 @@ Primeira versão do sistema web para cadastro de produtos, registro de entradas,
 - Limpar os dados do navegador pode apagar os registros. Use **Baixar backup JSON**.
 - O ajuste de saldo informa o saldo final desejado e registra a diferença como movimentação.
 - Faça conferência física e validação antes de usar os números em processos oficiais.
+
+## Recursos disponíveis na versão 1.1
+- Painel com indicadores e gráfico de movimentações dos últimos 7 dias.
+- Alertas para lotes vencidos e com vencimento nos próximos 30 dias, conforme validade informada nas entradas.
+- Filtros do histórico por produto, documento, tipo e período.
+- Exportação CSV de saldos e de movimentações.
+- Impressão do relatório de saldos.
+- Backup e restauração em JSON.
 
 ## Próximas etapas
 - Banco de dados central e autenticação.
