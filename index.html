@@ -39,7 +39,7 @@
 <div class="grid">
 <div class="panel"><h2>Cadastrar produto</h2>
 <form id="formProduto">
-<div class="field"><label for="codigo">Código de barras / código interno</label><div class="actions"><input id="codigo" maxlength="80" placeholder="Leia ou digite o código" style="flex:1;min-width:150px"><button type="button" class="secondary" id="scanCadastro">📷 Ler código</button></div></div>
+<div class="field"><label for="codigo">Código interno (Teknisa) *</label><input id="codigo" maxlength="80" placeholder="Ex.: 1.03.01.001.00" required></div><div class="field"><label for="codigoBarras">Código de barras (EAN/GTIN)</label><div class="actions"><input id="codigoBarras" maxlength="80" placeholder="Leia ou digite o código de barras" style="flex:1;min-width:150px"><button type="button" class="secondary" id="scanCadastro">📷 Ler código</button></div></div>
 <div class="field"><label for="nome">Nome do produto *</label><input id="nome" required maxlength="120" placeholder="Nome do produto"></div>
 <div class="field"><label for="unidade">Unidade *</label><select id="unidade" required><option value="kg">kg</option><option value="un">unidade</option><option value="cx">caixa</option><option value="pct">pacote</option><option value="L">litro</option></select></div>
 <div class="field"><label for="minimo">Estoque mínimo (opcional)</label><input id="minimo" type="number" min="0" step="0.001" placeholder="0"></div>
@@ -100,7 +100,7 @@ function render(){
  const pOpts=db.products.map(p=>'<option value="'+p.id+'">'+esc(p.code?p.code+' — ':'')+esc(p.name)+'</option>').join('');
  $('produtoMov').innerHTML=pOpts||'<option value="">Cadastre um produto primeiro</option>';
  const q=$('buscaProduto').value.toLowerCase();
- $('listaProdutos').innerHTML=db.products.filter(p=>(p.name+' '+p.code).toLowerCase().includes(q)).map(p=>'<tr><td>'+esc(p.code||'—')+'</td><td><strong>'+esc(p.name)+'</strong></td><td>'+esc(p.unit)+'</td><td>'+qty(balance(p.id))+'</td><td><button class="secondary" data-delete="'+p.id+'">Excluir</button></td></tr>').join('')||'<tr><td colspan="5" class="empty">Nenhum produto cadastrado.</td></tr>';
+ $('listaProdutos').innerHTML=db.products.filter(p=>(p.name+' '+p.code+' '+(p.barcode||'')).toLowerCase().includes(q)).map(p=>'<tr><td>'+esc(p.code||'—')+'</td><td><strong>'+esc(p.name)+'</strong></td><td>'+esc(p.unit)+'</td><td>'+qty(balance(p.id))+'</td><td><button class="secondary" data-delete="'+p.id+'">Excluir</button></td></tr>').join('')||'<tr><td colspan="5" class="empty">Nenhum produto cadastrado.</td></tr>';
  const mq=$('buscaMov').value.toLowerCase(), mt=$('filtroTipo').value, de=$('movDe').value, ate=$('movAte').value;
  const moves=[...db.moves].sort((a,b)=>b.date.localeCompare(a.date)||b.created-b.created);
  const rows=moves.filter(m=>{const p=product(m.productId);return p&&(p.name+' '+p.code+' '+m.doc+' '+m.obs).toLowerCase().includes(mq)&&(!mt||m.type===mt)&&(!de||m.date>=de)&&(!ate||m.date<=ate)});
@@ -110,7 +110,7 @@ function render(){
  $('listaRel').innerHTML=db.products.filter(p=>(p.name+' '+p.code).toLowerCase().includes(rq)).map(p=>{const b=balance(p.id),low=p.min!==null&&p.min!==''&&b<=Number(p.min);return '<tr><td>'+esc(p.code||'—')+'</td><td>'+esc(p.name)+'</td><td>'+esc(p.unit)+'</td><td><strong>'+qty(b)+'</strong></td><td>'+ (p.min?qty(p.min):'—')+'</td><td>'+(low?'<span class="tag" style="background:#fff0e8;color:#9a431d">Abaixo do mínimo</span>':'<span class="tag">OK</span>')+'</td></tr>'}).join('')||'<tr><td colspan="6" class="empty">Nenhum produto cadastrado.</td></tr>';
 }
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));}));
-$('formProduto').addEventListener('submit',e=>{e.preventDefault();const name=$('nome').value.trim(),code=$('codigo').value.trim();if(db.products.some(p=>code&&p.code===code)){alert('Já existe um produto com esse código.');return}db.products.push({id:crypto.randomUUID(),code,name,unit:$('unidade').value,min:$('minimo').value||null});e.target.reset();save('Produto cadastrado.')});
+$('formProduto').addEventListener('submit',e=>{e.preventDefault();const name=$('nome').value.trim(),code=$('codigo').value.trim();const barcode=normalizeBarcode($('codigoBarras').value);if(db.products.some(p=>code&&p.code===code)){alert('Já existe um produto com esse código interno.');return}if(db.products.some(p=>barcode&&normalizeBarcode(p.barcode)===barcode)){alert('Este código de barras já está vinculado a outro produto.');return}db.products.push({id:crypto.randomUUID(),code,barcode,name,unit:$('unidade').value,min:$('minimo').value||null});e.target.reset();save('Produto cadastrado.')});
 $('formMov').addEventListener('submit',e=>{e.preventDefault();const id=$('produtoMov').value,p=product(id),type=$('tipo').value,q=Number($('quantidade').value);if(!p){alert('Cadastre ou selecione um produto.');return}if(!Number.isFinite(q)||q<=0){alert('Informe uma quantidade válida.');return}if(type==='saida'&&q>balance(id)){alert('Saldo insuficiente. Saldo disponível: '+qty(balance(id))+' '+p.unit);return}if(type==='ajuste'){const target=q,current=balance(id);const delta=target-current;if(delta===0){alert('O saldo já corresponde à quantidade informada.');return}db.moves.push({id:crypto.randomUUID(),productId:id,type:'ajuste',qty:delta,date:$('dataMov').value,doc:$('documento').value.trim(),lot:$('lote').value.trim(),expiry:$('validade').value,obs:$('obs').value.trim()+' (ajuste para saldo informado)',created:Date.now()})}else db.moves.push({id:crypto.randomUUID(),productId:id,type,qty:q,date:$('dataMov').value,doc:$('documento').value.trim(),lot:$('lote').value.trim(),expiry:$('validade').value,obs:$('obs').value.trim(),created:Date.now()});e.target.reset();$('dataMov').value=today;save('Movimentação registrada.')});
 $('listaProdutos').addEventListener('click',e=>{const id=e.target.dataset.delete;if(!id)return;if(db.moves.some(m=>m.productId===id)){alert('Este produto possui movimentações. Não pode ser excluído para preservar o histórico.');return}if(confirm('Excluir este produto?')){db.products=db.products.filter(p=>p.id!==id);save('Produto excluído.')}});
 ['buscaProduto','buscaMov','filtroTipo','buscaRel','movDe','movAte'].forEach(id=>$(id).addEventListener('input',render));
@@ -119,7 +119,7 @@ $('exportar').addEventListener('click',()=>{const rows=[['Codigo','Produto','Uni
 $('backup').addEventListener('click',()=>download('backup-cd-aparecida.json',JSON.stringify(db,null,2),'application/json'));
 function exportExcel(){
  if(!window.XLSX){alert('A biblioteca Excel não carregou. Verifique a conexão com a internet e tente novamente.');return}
- const saldos=db.products.map(p=>({'Código':p.code||'','Produto':p.name,'Unidade':p.unit,'Saldo atual':balance(p.id),'Estoque mínimo':p.min??''}));
+ const saldos=db.products.map(p=>({'Código interno':p.code||'','Código de barras':p.barcode||'','Produto':p.name,'Unidade':p.unit,'Saldo atual':balance(p.id),'Estoque mínimo':p.min??''}));
  const movimentos=db.moves.map(m=>{const p=product(m.productId);return {'Data':m.date,'Código':p?.code||'','Produto':p?.name||'','Tipo':typeName(m.type),'Quantidade':m.qty,'Unidade':p?.unit||'','Documento':m.doc||'','Lote':m.lot||'','Validade':m.expiry||'','Observação':m.obs||''}});
  const wb=XLSX.utils.book_new();
  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(saldos),'Saldos');
@@ -129,7 +129,7 @@ function exportExcel(){
 function downloadExcelTemplate(){
  if(!window.XLSX){alert('A biblioteca Excel não carregou. Verifique a conexão com a internet.');return}
  const wb=XLSX.utils.book_new();
- const rows=[{'Código':'EXEMPLO-001','Produto':'Produto de exemplo','Unidade':'kg','Estoque mínimo':10,'Saldo inicial':25}];
+ const rows=[{'Código interno':'1.03.01.001.00','Código de barras':'7890000000000','Produto':'Produto de exemplo','Unidade':'kg','Estoque mínimo':10,'Saldo inicial':25}];
  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Importacao');
  XLSX.writeFile(wb,'modelo-importacao-estoque.xlsx');
 }
@@ -145,7 +145,7 @@ async function importExcelFile(file){
  const keys=Object.keys(rows[0]);const map={};
  keys.forEach(k=>map[normalizeHeader(k)]=k);
  const col=(...names)=>names.map(n=>map[normalizeHeader(n)]).find(Boolean);
- const cCode=col('Código','Codigo'),cName=col('Produto','Nome'),cUnit=col('Unidade','Un.');
+ const cCode=col('Código interno','Codigo interno','Código','Codigo'),cBarcode=col('Código de barras','Codigo de barras','EAN','GTIN'),cName=col('Produto','Nome'),cUnit=col('Unidade','Un.');
  const cMin=col('Estoque mínimo','Minimo'),cBal=col('Saldo inicial','Saldo');
  if(!cCode||!cName||!cUnit)throw new Error('Colunas obrigatórias: Código, Produto e Unidade. Use o modelo disponibilizado.');
  const accepted=['kg','un','cx','pct','L'];
@@ -153,7 +153,7 @@ async function importExcelFile(file){
  for(let i=0;i<rows.length;i++){
   const r=rows[i],code=String(r[cCode]??'').trim(),name=String(r[cName]??'').trim(),unit=String(r[cUnit]??'').trim();
   if(!code&&!name&&!unit)continue;
-  if(!code||!name||!unit)throw new Error('Linha '+(i+2)+': código, produto e unidade são obrigatórios.');
+  const barcode=cBarcode?normalizeBarcode(r[cBarcode]):'';if(!code||!name||!unit)throw new Error('Linha '+(i+2)+': código interno, produto e unidade são obrigatórios.');if(barcode&&(db.products.some(p=>normalizeBarcode(p.barcode)===barcode)||prepared.some(p=>p.barcode===barcode)))throw new Error('Linha '+(i+2)+': código de barras duplicado.');
   if(!accepted.includes(unit))throw new Error('Linha '+(i+2)+': unidade inválida. Use kg, un, cx, pct ou L.');
   if(seen.has(code)||db.products.some(p=>p.code===code))throw new Error('Código duplicado: '+code+'. Nenhum dado foi importado.');
   seen.add(code);
@@ -162,14 +162,14 @@ async function importExcelFile(file){
   const min=minRaw===''?null:Number(minRaw.replace(',','.'));
   const bal=balRaw===''?0:Number(balRaw.replace(',','.'));
   if((min!==null&&(!Number.isFinite(min)||min<0))||!Number.isFinite(bal)||bal<0)throw new Error('Linha '+(i+2)+': estoque mínimo ou saldo inicial inválido.');
-  prepared.push({code,name,unit,min,bal});
+  prepared.push({code,barcode,name,unit,min,bal});
  }
  if(!prepared.length)throw new Error('Nenhuma linha válida encontrada.');
  if(!confirm('Serão cadastrados '+prepared.length+' produto(s). Saldos iniciais maiores que zero serão registrados como ajustes. Os dados existentes não serão substituídos. Continuar?'))return;
  const date=new Date().toLocaleDateString('en-CA');
  prepared.forEach(x=>{
   const id=crypto.randomUUID();
-  db.products.push({id,code:x.code,name:x.name,unit:x.unit,min:x.min});
+  db.products.push({id,code:x.code,barcode:x.barcode,name:x.name,unit:x.unit,min:x.min});
   if(x.bal>0)db.moves.push({id:crypto.randomUUID(),productId:id,type:'ajuste',qty:x.bal,date,doc:'IMPORTAÇÃO EXCEL',lot:'',expiry:'',obs:'Saldo inicial importado de planilha',created:Date.now()});
  });
  save(prepared.length+' produto(s) importado(s) com sucesso.');
@@ -210,7 +210,7 @@ async function startScanner(target){
    if(scanTarget==='cadastro'){
     $('codigo').value=code;$('scanStatus').textContent='Código lido: '+code;
    }else{
-    const p=db.products.find(p=>normalizeBarcode(p.code)===code);
+    const p=db.products.find(p=>normalizeBarcode(p.barcode)===code);
     if(p){$('produtoMov').value=p.id;$('scanStatus').textContent='Produto localizado: '+p.name}
     else{$('scanStatus').textContent='Código '+code+' não cadastrado. Cadastre o produto primeiro.';return}
    }
