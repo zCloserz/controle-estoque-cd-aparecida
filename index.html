@@ -39,7 +39,7 @@
 <div class="grid">
 <div class="panel"><h2>Cadastrar produto</h2>
 <form id="formProduto">
-<div class="field"><label for="codigo">Código</label><input id="codigo" maxlength="50" placeholder="Ex.: 1.03.01.001.00"></div>
+<div class="field"><label for="codigo">Código de barras / código interno</label><div class="actions"><input id="codigo" maxlength="80" placeholder="Leia ou digite o código" style="flex:1;min-width:150px"><button type="button" class="secondary" id="scanCadastro">📷 Ler código</button></div></div>
 <div class="field"><label for="nome">Nome do produto *</label><input id="nome" required maxlength="120" placeholder="Nome do produto"></div>
 <div class="field"><label for="unidade">Unidade *</label><select id="unidade" required><option value="kg">kg</option><option value="un">unidade</option><option value="cx">caixa</option><option value="pct">pacote</option><option value="L">litro</option></select></div>
 <div class="field"><label for="minimo">Estoque mínimo (opcional)</label><input id="minimo" type="number" min="0" step="0.001" placeholder="0"></div>
@@ -53,7 +53,7 @@
 <div class="panel"><h2>Registrar movimentação</h2>
 <form id="formMov">
 <div class="field"><label for="tipo">Tipo *</label><select id="tipo"><option value="entrada">Entrada</option><option value="saida">Saída</option><option value="ajuste">Ajuste de saldo</option></select></div>
-<div class="field"><label for="produtoMov">Produto *</label><select id="produtoMov" required></select></div>
+<div class="field"><label for="produtoMov">Produto *</label><div class="actions"><select id="produtoMov" required style="flex:1;min-width:150px"></select><button type="button" class="secondary" id="scanMov">📷 Ler código</button></div></div>
 <div class="field"><label for="quantidade">Quantidade *</label><input id="quantidade" type="number" min="0.001" step="0.001" required placeholder="0,000"></div>
 <div class="field"><label for="dataMov">Data *</label><input id="dataMov" type="date" required></div>
 <div class="field"><label for="documento">Nota fiscal / documento</label><input id="documento" maxlength="100" placeholder="Número da NF ou transferência"></div>
@@ -70,8 +70,9 @@
 <div class="panel" style="margin-top:14px"><h2>Cuidados com os dados</h2><p class="muted">O saldo é calculado a partir do saldo inicial zero e das movimentações lançadas neste sistema. Antes de usar oficialmente, cadastre os produtos, confira o saldo físico e lance um ajuste inicial validado. Não use este protótipo como fonte única de dados fiscais ou contábeis.</p></div>
 </section>
 <div class="status" id="status" role="status">Pronto.</div>
-</main>
+<div id="scannerModal" class="hidden" style="position:fixed;inset:0;z-index:1000;background:#071522dd;padding:18px;display:flex;align-items:center;justify-content:center"><div class="panel" style="width:min(100%,520px);max-height:90vh;overflow:auto"><h2>Leitura de código de barras</h2><p class="muted">Posicione o código dentro da área da câmera. Autorize o acesso quando solicitado.</p><div id="reader" style="width:100%;min-height:220px"></div><p id="scanStatus" class="muted">Aguardando câmera...</p><div class="actions"><button type="button" class="secondary" id="closeScanner">Fechar câmera</button></div></div></div></main>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 const KEY='cd-aparecida-v1';
 let db={products:[],moves:[]};
@@ -185,5 +186,46 @@ $('imprimir').addEventListener('click',()=>{document.querySelectorAll('.section'
 function renderExpiry(){const todayISO=new Date().toLocaleDateString('en-CA');const limit=new Date();limit.setDate(limit.getDate()+30);const limitISO=limit.toLocaleDateString('en-CA');const lots=db.moves.filter(m=>m.type==='entrada'&&m.expiry&&m.lot).filter(m=>m.expiry<=limitISO).sort((a,b)=>a.expiry.localeCompare(b.expiry));$('alertasValidade').innerHTML=lots.length?lots.map(m=>{const p=product(m.productId);const expired=m.expiry<todayISO;return '<div class="alert-exp '+(expired?'expired':'')+'"><strong>'+(expired?'Vencido':'Próximo do vencimento')+'</strong> · '+esc(p?.name||'Produto')+' · Lote '+esc(m.lot)+' · Validade '+esc(m.expiry.split('-').reverse().join('/'))+'</div>'}).join(''):'Nenhum lote com validade nos próximos 30 dias.'}
 const baseRender=render;render=function(){baseRender();renderExpiry()};
 load();render();
+
+let scanner=null,scanTarget=null,scanStarting=false;
+function normalizeBarcode(v){return String(v??'').trim().replace(/\\s+/g,'')}
+async function stopScanner(){
+ if(scanner){try{await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}
+ $('scannerModal').classList.add('hidden');$('reader').innerHTML='';scanStarting=false;
+}
+async function startScanner(target){
+ if(scanStarting)return;
+ scanStarting=true;scanTarget=target;$('scannerModal').classList.remove('hidden');$('scanStatus').textContent='Solicitando acesso à câmera...';
+ try{
+  if(!window.isSecureContext)throw new Error('A câmera exige HTTPS. Abra o sistema pelo GitHub Pages.');
+  if(!navigator.mediaDevices?.getUserMedia)throw new Error('Este navegador não oferece acesso à câmera.');
+  if(!window.Html5Qrcode)throw new Error('O leitor não carregou. Verifique a conexão com a internet e atualize a página.');
+  scanner=new Html5Qrcode('reader');
+  const cameras=await Html5Qrcode.getCameras();
+  if(!cameras.length)throw new Error('Nenhuma câmera foi encontrada.');
+  const cam=cameras.find(c=>/back|traseira|environment/i.test(c.label))||cameras[cameras.length-1];
+  await scanner.start(cam.id,{fps:10,qrbox:{width:260,height:150},aspectRatio:1.7},async decoded=>{
+   const code=normalizeBarcode(decoded);
+   if(!code)return;
+   if(scanTarget==='cadastro'){
+    $('codigo').value=code;$('scanStatus').textContent='Código lido: '+code;
+   }else{
+    const p=db.products.find(p=>normalizeBarcode(p.code)===code);
+    if(p){$('produtoMov').value=p.id;$('scanStatus').textContent='Produto localizado: '+p.name}
+    else{$('scanStatus').textContent='Código '+code+' não cadastrado. Cadastre o produto primeiro.';return}
+   }
+   await stopScanner();
+  },()=>{});
+  $('scanStatus').textContent='Câmera ativa. Aponte para o código de barras.';
+ }catch(err){
+  $('scanStatus').textContent=err.message||'Não foi possível iniciar a câmera.';
+  if(scanner){try{await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}
+  scanStarting=false;
+ }
+}
+$('scanCadastro').addEventListener('click',()=>startScanner('cadastro'));
+$('scanMov').addEventListener('click',()=>startScanner('movimento'));
+$('closeScanner').addEventListener('click',stopScanner);
+$('scannerModal').addEventListener('click',e=>{if(e.target===$('scannerModal'))stopScanner()});
 </script>
 </body></html>
