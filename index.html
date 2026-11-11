@@ -10,12 +10,12 @@
 *{box-sizing:border-box}body{margin:0;background:#eef2f7}button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;font-weight:650;background:#173b5e;color:white;transition:.18s}button:hover{filter:brightness(1.08);transform:translateY(-1px)}button.secondary{background:#e8eef5;color:#19334c}button.danger{background:#a83232}
 .top{background:linear-gradient(115deg,#0b1d32,#173e61);color:#fff;padding:24px clamp(16px,4vw,42px);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;box-shadow:0 8px 24px #0b1d3222}.top h1{font-size:22px;letter-spacing:-.5px;margin:0}.top p{margin:6px 0 0;color:#c5d3df;font-size:13px}.top .tag{background:#ffffff18;color:#eaf4ff;border:1px solid #ffffff26}
 .wrap{max-width:1400px;margin:auto;padding:25px clamp(14px,3vw,34px)}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;padding:7px;background:#e2e9f1;border-radius:13px;width:max-content;max-width:100%}.nav button{background:transparent;color:#52677b}.nav button.active{background:#173b5e;color:white;box-shadow:0 3px 8px #173b5e25}
-.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}.card,.panel{background:white;border:1px solid #e0e7ef;border-radius:16px;padding:18px;box-shadow:0 5px 18px #19334c0a}.card{position:relative;overflow:hidden}.card:after{content:"";position:absolute;right:-22px;top:-25px;width:82px;height:82px;border-radius:50%;background:#edf4fa}.metric{font-size:29px;font-weight:780;letter-spacing:-1px;margin-top:9px;color:#142f49;position:relative;z-index:1}.muted{color:#718195;font-size:13px}.panel h2{font-size:16px;letter-spacing:-.2px;margin:0 0 16px;color:#1a344d}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}.field label{font-size:13px;font-weight:650;color:#40566b}.field input,.field select,.toolbar input,.toolbar select{width:100%;border:1px solid #ccd7e1;border-radius:9px;padding:11px;background:white;color:#172536;outline:none}.field input:focus,.field select:focus,.toolbar input:focus,.toolbar select:focus{border-color:#3976a8;box-shadow:0 0 0 3px #3976a81c}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px}.toolbar input{max-width:330px}.table-wrap{overflow:auto;border:1px solid #edf1f5;border-radius:10px}table{width:100%;border-collapse:collapse;font-size:13px;min-width:650px}th,td{text-align:left;padding:12px 11px;border-bottom:1px solid #edf1f5}th{color:#6b7c8e;font-size:11px;text-transform:uppercase;letter-spacing:.45px;background:#f7f9fc}tbody tr:hover{background:#f8fbfe}tbody tr:last-child td{border-bottom:0}td strong{font-weight:700}.empty{text-align:center;color:#718092;padding:28px}.hidden{display:none!important}.tag{display:inline-block;border-radius:30px;background:#e9f2f9;color:#1c527c;padding:5px 9px;font-size:11px;font-weight:700}.notice{background:#fff8e6;border:1px solid #f0dfb4;padding:12px 14px;border-radius:10px;color:#70551a;font-size:13px;margin-bottom:17px}.status{font-size:12px;color:#6b7b8a;margin-top:14px}.foot{font-size:12px;color:#6c7b89;margin:18px 0}.section{display:none}.section.active{display:block}.dashboard-lower{display:grid;grid-template-columns:1.2fr 1fr;gap:15px;margin-bottom:16px}.chart-legend{display:flex;gap:16px;flex-wrap:wrap;color:#6b7c8e;font-size:12px;margin-bottom:12px}.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.bars{height:190px;display:flex;align-items:flex-end;justify-content:space-around;gap:10px;padding:10px 4px 0;border-bottom:1px solid #e6edf3}.bar-group{height:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;gap:5px;position:relative}.bar{width:min(24px,35%);min-height:3px;border-radius:6px 6px 2px 2px}.bar.entry{background:#2b83b9}.bar.exit{background:#75a6cf}.bar-labels{display:flex;justify-content:space-around;gap:10px;color:#8090a0;font-size:11px;padding-top:9px}.chart-empty{color:#8190a0;font-size:13px;padding:35px 8px;text-align:center}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}.card,.panel{background:white;border:1px solid #e0e7ef;border-radius:16px;padding:18px;box-shadow:0 5px 18px #19334c0a}.card{position:relative;overflow:hidden}.card:after{content:"";position:absolute;right:-22px;top:-25px;width:82px;height:82px;border-radius:50%;background:#edf4fa}.metric{font-size:29px;font-weight:780;letter-spacing:-1px;margin-top:9px;color:#142f49;position:relative;z-index:1}.muted{color:#718195;font-size:13px}.panel h2{font-size:16px;letter-spacing:-.2px;margin:0 0 16px;color:#1a344d}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}.field label{font-size:13px;font-weight:650;color:#40566b}.field input,.field select,.toolbar input,.toolbar select{width:100%;border:1px solid #ccd7e1;border-radius:9px;padding:11px;background:white;color:#172536;outline:none}.field input:focus,.field select:focus,.toolbar input:focus,.toolbar select:focus{border-color:#3976a8;box-shadow:0 0 0 3px #3976a81c}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px}.toolbar input{max-width:330px}.table-wrap{overflow:auto;border:1px solid #edf1f5;border-radius:10px}table{width:100%;border-collapse:collapse;font-size:13px;min-width:650px}th,td{text-align:left;padding:12px 11px;border-bottom:1px solid #edf1f5}th{color:#6b7c8e;font-size:11px;text-transform:uppercase;letter-spacing:.45px;background:#f7f9fc}tbody tr:hover{background:#f8fbfe}tbody tr:last-child td{border-bottom:0}td strong{font-weight:700}.empty{text-align:center;color:#718092;padding:28px}.hidden{display:none!important}.tag{display:inline-block;border-radius:30px;background:#e9f2f9;color:#1c527c;padding:5px 9px;font-size:11px;font-weight:700}.notice{background:#fff8e6;border:1px solid #f0dfb4;padding:12px 14px;border-radius:10px;color:#70551a;font-size:13px;margin-bottom:17px}.status{font-size:12px;color:#6b7b8a;margin-top:14px}.foot{font-size:12px;color:#6c7b89;margin:18px 0}.section{display:none}.section.active{display:block}.dashboard-lower{display:grid;grid-template-columns:1.2fr 1fr;gap:15px;margin-bottom:16px}.chart-legend{display:flex;gap:16px;flex-wrap:wrap;color:#6b7c8e;font-size:12px;margin-bottom:12px}.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.bars{height:190px;display:flex;align-items:flex-end;justify-content:space-around;gap:10px;padding:10px 4px 0;border-bottom:1px solid #e6edf3}.bar-group{height:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;gap:5px;position:relative}.bar{width:min(24px,35%);min-height:3px;border-radius:6px 6px 2px 2px}.bar.entry{background:#2b83b9}.bar.exit{background:#75a6cf}.bar-labels{display:flex;justify-content:space-around;gap:10px;color:#8090a0;font-size:11px;padding-top:9px}.chart-empty{color:#8190a0;font-size:13px;padding:35px 8px;text-align:center}.alert-exp{border-left:4px solid #d28a27;padding:9px 12px;background:#fff8e9;border-radius:7px;margin:7px 0;font-size:13px}.alert-exp.expired{border-color:#b83a3a;background:#fff0f0}.toolbar input[type=date]{max-width:170px}
 @media(max-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid,.dashboard-lower{grid-template-columns:1fr}}@media(max-width:440px){.cards{gap:9px}.card,.panel{padding:14px}.metric{font-size:23px}.nav{width:100%}.nav button{flex:1;padding:10px 8px;font-size:12px}}
 </style>
 </head>
 <body>
-<header class="top"><div><h1>📦 Estoque CD Aparecida</h1><p>Controle de produtos, movimentações e conferência de saldos</p></div><span class="tag">Versão inicial · 1.0</span></header>
+<header class="top"><div><h1>📦 Estoque CD Aparecida</h1><p>Controle de produtos, movimentações e conferência de saldos</p></div><span class="tag">Versão 1.2 · Excel</span></header>
 <main class="wrap">
 <div class="notice"><strong>Atenção:</strong> esta versão salva os dados neste navegador e neste dispositivo. Ainda não há sincronização entre computadores ou usuários. Faça exportações de backup regularmente.</div>
 <nav class="nav" aria-label="Navegação">
@@ -32,14 +32,14 @@
 <div class="panel"><h2>Movimentações nos últimos 7 dias</h2><div class="chart-legend"><span><i class="legend-dot" style="background:#2b83b9"></i>Entradas</span><span><i class="legend-dot" style="background:#75a6cf"></i>Saídas</span></div><div id="graficoMov"><div class="chart-empty">Registre movimentações para visualizar o gráfico.</div></div></div>
 <div class="panel"><h2>Resumo operacional</h2><div class="muted">Indicadores calculados com base nos lançamentos cadastrados.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px"><div style="padding:13px;border-radius:11px;background:#f2f7fb"><div class="muted">Movimentações totais</div><div class="metric" id="kMovTotal">0</div></div><div style="padding:13px;border-radius:11px;background:#f2f7fb"><div class="muted">Produtos abaixo do mínimo</div><div class="metric" id="kBaixo">0</div></div></div><p class="foot">Os gráficos mostram quantidade de registros, não somam kg e unidades entre si.</p></div>
 </div>
-<div class="panel"><h2>Últimas movimentações</h2><div class="table-wrap"><table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Quantidade</th><th>Documento / observação</th></tr></thead><tbody id="ultimas"></tbody></table></div></div>
+<div class="panel" style="margin-bottom:16px"><h2>Alertas de validade</h2><div id="alertasValidade" class="muted">Nenhum lote com validade cadastrada.</div></div>\n<div class="panel"><h2>Últimas movimentações</h2><div class="table-wrap"><table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Quantidade</th><th>Documento / observação</th></tr></thead><tbody id="ultimas"></tbody></table></div></div>
 <p class="foot">* Soma simples das quantidades cadastradas. Produtos em kg e unidades não são convertidos entre si.</p>
 </section>
 <section id="produtos" class="section">
 <div class="grid">
 <div class="panel"><h2>Cadastrar produto</h2>
 <form id="formProduto">
-<div class="field"><label for="codigo">Código</label><input id="codigo" maxlength="50" placeholder="Ex.: 1.03.01.001.00"></div>
+<div class="field"><label for="codigo">Código interno (Teknisa) *</label><input id="codigo" maxlength="80" placeholder="Ex.: 1.03.01.001.00" required></div><div class="field"><label for="codigoBarras">Código de barras (EAN/GTIN)</label><div class="actions"><input id="codigoBarras" maxlength="80" placeholder="Leia ou digite o código de barras" style="flex:1;min-width:150px"><button type="button" class="secondary" id="scanCadastro">📷 Ler código</button></div></div>
 <div class="field"><label for="nome">Nome do produto *</label><input id="nome" required maxlength="120" placeholder="Nome do produto"></div>
 <div class="field"><label for="unidade">Unidade *</label><select id="unidade" required><option value="kg">kg</option><option value="un">unidade</option><option value="cx">caixa</option><option value="pct">pacote</option><option value="L">litro</option></select></div>
 <div class="field"><label for="minimo">Estoque mínimo (opcional)</label><input id="minimo" type="number" min="0" step="0.001" placeholder="0"></div>
@@ -53,7 +53,7 @@
 <div class="panel"><h2>Registrar movimentação</h2>
 <form id="formMov">
 <div class="field"><label for="tipo">Tipo *</label><select id="tipo"><option value="entrada">Entrada</option><option value="saida">Saída</option><option value="ajuste">Ajuste de saldo</option></select></div>
-<div class="field"><label for="produtoMov">Produto *</label><select id="produtoMov" required></select></div>
+<div class="field"><label for="produtoMov">Produto *</label><div class="actions"><select id="produtoMov" required style="flex:1;min-width:150px"></select><button type="button" class="secondary" id="scanMov">📷 Ler código</button></div></div>
 <div class="field"><label for="quantidade">Quantidade *</label><input id="quantidade" type="number" min="0.001" step="0.001" required placeholder="0,000"></div>
 <div class="field"><label for="dataMov">Data *</label><input id="dataMov" type="date" required></div>
 <div class="field"><label for="documento">Nota fiscal / documento</label><input id="documento" maxlength="100" placeholder="Número da NF ou transferência"></div>
@@ -62,15 +62,17 @@
 <div class="field"><label for="obs">Observação</label><input id="obs" maxlength="250" placeholder="Ex.: transferência, conferência..."></div>
 <button type="submit">Registrar movimentação</button>
 </form></div>
-<div class="panel"><h2>Histórico</h2><div class="toolbar"><input id="buscaMov" placeholder="Buscar produto ou documento..."><select id="filtroTipo"><option value="">Todos os tipos</option><option value="entrada">Entradas</option><option value="saida">Saídas</option><option value="ajuste">Ajustes</option></select></div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Qtd.</th><th>Documento / observação</th></tr></thead><tbody id="listaMov"></tbody></table></div></div>
+<div class="panel"><h2>Histórico</h2><div class="toolbar"><input id="buscaMov" placeholder="Buscar produto ou documento..."><input id="movDe" type="date" title="Data inicial"><input id="movAte" type="date" title="Data final"><select id="filtroTipo"><option value="">Todos os tipos</option><option value="entrada">Entradas</option><option value="saida">Saídas</option><option value="ajuste">Ajustes</option></select></div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Qtd.</th><th>Documento / observação</th></tr></thead><tbody id="listaMov"></tbody></table></div></div>
 </div>
 </section>
 <section id="relatorios" class="section">
-<div class="panel"><h2>Relatório de saldos</h2><div class="toolbar"><input id="buscaRel" placeholder="Filtrar produtos..."><button id="exportar">Exportar saldos CSV</button><button class="secondary" id="backup">Baixar backup JSON</button><label class="actions"><input type="file" id="restaurar" accept=".json,application/json" hidden><button class="secondary" type="button" id="btnRestaurar">Restaurar backup</button></label></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Produto</th><th>Un.</th><th>Saldo atual</th><th>Mínimo</th><th>Situação</th></tr></thead><tbody id="listaRel"></tbody></table></div></div>
+<div class="panel"><h2>Relatório de saldos</h2><div class="toolbar"><input id="buscaRel" placeholder="Filtrar produtos..."><button id="exportar">Exportar saldos CSV</button><button class="secondary" id="exportarMov">Exportar movimentações CSV</button><button class="secondary" id="imprimir">Imprimir relatório</button><button class="secondary" id="backup">Baixar backup JSON</button><button class="secondary" id="exportarExcel">Exportar Excel (.xlsx)</button><button class="secondary" id="modeloExcel">Baixar modelo Excel</button><label class="actions"><input type="file" id="importarExcel" accept=".xlsx,.xls,.csv" hidden><button class="secondary" type="button" id="btnImportarExcel">Importar Excel</button></label><label class="actions"><input type="file" id="restaurar" accept=".json,application/json" hidden><button class="secondary" type="button" id="btnRestaurar">Restaurar backup</button></label></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Produto</th><th>Un.</th><th>Saldo atual</th><th>Mínimo</th><th>Situação</th></tr></thead><tbody id="listaRel"></tbody></table></div></div>
 <div class="panel" style="margin-top:14px"><h2>Cuidados com os dados</h2><p class="muted">O saldo é calculado a partir do saldo inicial zero e das movimentações lançadas neste sistema. Antes de usar oficialmente, cadastre os produtos, confira o saldo físico e lance um ajuste inicial validado. Não use este protótipo como fonte única de dados fiscais ou contábeis.</p></div>
 </section>
 <div class="status" id="status" role="status">Pronto.</div>
-</main>
+<div id="scannerModal" class="hidden" style="position:fixed;inset:0;z-index:1000;background:#071522dd;padding:18px;display:flex;align-items:center;justify-content:center"><div class="panel" style="width:min(100%,520px);max-height:90vh;overflow:auto"><h2>Leitura de código de barras</h2><p class="muted">Posicione o código dentro da área da câmera. Autorize o acesso quando solicitado.</p><div id="reader" style="width:100%;min-height:220px"></div><p id="scanStatus" class="muted">Aguardando câmera...</p><div class="actions"><button type="button" class="secondary" id="closeScanner">Fechar câmera</button></div></div></div></main>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 const KEY='cd-aparecida-v1';
 let db={products:[],moves:[]};
@@ -98,25 +100,132 @@ function render(){
  const pOpts=db.products.map(p=>'<option value="'+p.id+'">'+esc(p.code?p.code+' — ':'')+esc(p.name)+'</option>').join('');
  $('produtoMov').innerHTML=pOpts||'<option value="">Cadastre um produto primeiro</option>';
  const q=$('buscaProduto').value.toLowerCase();
- $('listaProdutos').innerHTML=db.products.filter(p=>(p.name+' '+p.code).toLowerCase().includes(q)).map(p=>'<tr><td>'+esc(p.code||'—')+'</td><td><strong>'+esc(p.name)+'</strong></td><td>'+esc(p.unit)+'</td><td>'+qty(balance(p.id))+'</td><td><button class="secondary" data-delete="'+p.id+'">Excluir</button></td></tr>').join('')||'<tr><td colspan="5" class="empty">Nenhum produto cadastrado.</td></tr>';
- const mq=$('buscaMov').value.toLowerCase(), mt=$('filtroTipo').value;
+ $('listaProdutos').innerHTML=db.products.filter(p=>(p.name+' '+p.code+' '+(p.barcode||'')).toLowerCase().includes(q)).map(p=>'<tr><td>'+esc(p.code||'—')+'</td><td><strong>'+esc(p.name)+'</strong></td><td>'+esc(p.unit)+'</td><td>'+qty(balance(p.id))+'</td><td><button class="secondary" data-delete="'+p.id+'">Excluir</button></td></tr>').join('')||'<tr><td colspan="5" class="empty">Nenhum produto cadastrado.</td></tr>';
+ const mq=$('buscaMov').value.toLowerCase(), mt=$('filtroTipo').value, de=$('movDe').value, ate=$('movAte').value;
  const moves=[...db.moves].sort((a,b)=>b.date.localeCompare(a.date)||b.created-b.created);
- const rows=moves.filter(m=>{const p=product(m.productId);return p&&(p.name+' '+p.code+' '+m.doc+' '+m.obs).toLowerCase().includes(mq)&&(!mt||m.type===mt)});
+ const rows=moves.filter(m=>{const p=product(m.productId);return p&&(p.name+' '+p.code+' '+m.doc+' '+m.obs).toLowerCase().includes(mq)&&(!mt||m.type===mt)&&(!de||m.date>=de)&&(!ate||m.date<=ate)});
  const html=arr=>arr.map(m=>{const p=product(m.productId);return '<tr><td>'+esc(m.date)+'</td><td>'+esc(p?.name||'Produto removido')+'</td><td><span class="tag">'+typeName(m.type)+'</span></td><td>'+qty(m.qty)+' '+esc(p?.unit||'')+'</td><td>'+esc([m.doc,m.lot,m.expiry,m.obs].filter(Boolean).join(' · ')||'—')+'</td></tr>'}).join('')||'<tr><td colspan="5" class="empty">Nenhuma movimentação encontrada.</td></tr>';
  $('listaMov').innerHTML=html(rows);$('ultimas').innerHTML=html(moves.slice(0,6));
  const rq=$('buscaRel').value.toLowerCase();
  $('listaRel').innerHTML=db.products.filter(p=>(p.name+' '+p.code).toLowerCase().includes(rq)).map(p=>{const b=balance(p.id),low=p.min!==null&&p.min!==''&&b<=Number(p.min);return '<tr><td>'+esc(p.code||'—')+'</td><td>'+esc(p.name)+'</td><td>'+esc(p.unit)+'</td><td><strong>'+qty(b)+'</strong></td><td>'+ (p.min?qty(p.min):'—')+'</td><td>'+(low?'<span class="tag" style="background:#fff0e8;color:#9a431d">Abaixo do mínimo</span>':'<span class="tag">OK</span>')+'</td></tr>'}).join('')||'<tr><td colspan="6" class="empty">Nenhum produto cadastrado.</td></tr>';
 }
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));}));
-$('formProduto').addEventListener('submit',e=>{e.preventDefault();const name=$('nome').value.trim(),code=$('codigo').value.trim();if(db.products.some(p=>code&&p.code===code)){alert('Já existe um produto com esse código.');return}db.products.push({id:crypto.randomUUID(),code,name,unit:$('unidade').value,min:$('minimo').value||null});e.target.reset();save('Produto cadastrado.')});
+$('formProduto').addEventListener('submit',e=>{e.preventDefault();const name=$('nome').value.trim(),code=$('codigo').value.trim();const barcode=normalizeBarcode($('codigoBarras').value);if(db.products.some(p=>code&&p.code===code)){alert('Já existe um produto com esse código interno.');return}if(db.products.some(p=>barcode&&normalizeBarcode(p.barcode)===barcode)){alert('Este código de barras já está vinculado a outro produto.');return}db.products.push({id:crypto.randomUUID(),code,barcode,name,unit:$('unidade').value,min:$('minimo').value||null});e.target.reset();save('Produto cadastrado.')});
 $('formMov').addEventListener('submit',e=>{e.preventDefault();const id=$('produtoMov').value,p=product(id),type=$('tipo').value,q=Number($('quantidade').value);if(!p){alert('Cadastre ou selecione um produto.');return}if(!Number.isFinite(q)||q<=0){alert('Informe uma quantidade válida.');return}if(type==='saida'&&q>balance(id)){alert('Saldo insuficiente. Saldo disponível: '+qty(balance(id))+' '+p.unit);return}if(type==='ajuste'){const target=q,current=balance(id);const delta=target-current;if(delta===0){alert('O saldo já corresponde à quantidade informada.');return}db.moves.push({id:crypto.randomUUID(),productId:id,type:'ajuste',qty:delta,date:$('dataMov').value,doc:$('documento').value.trim(),lot:$('lote').value.trim(),expiry:$('validade').value,obs:$('obs').value.trim()+' (ajuste para saldo informado)',created:Date.now()})}else db.moves.push({id:crypto.randomUUID(),productId:id,type,qty:q,date:$('dataMov').value,doc:$('documento').value.trim(),lot:$('lote').value.trim(),expiry:$('validade').value,obs:$('obs').value.trim(),created:Date.now()});e.target.reset();$('dataMov').value=today;save('Movimentação registrada.')});
 $('listaProdutos').addEventListener('click',e=>{const id=e.target.dataset.delete;if(!id)return;if(db.moves.some(m=>m.productId===id)){alert('Este produto possui movimentações. Não pode ser excluído para preservar o histórico.');return}if(confirm('Excluir este produto?')){db.products=db.products.filter(p=>p.id!==id);save('Produto excluído.')}});
-['buscaProduto','buscaMov','filtroTipo','buscaRel'].forEach(id=>$(id).addEventListener('input',render));
+['buscaProduto','buscaMov','filtroTipo','buscaRel','movDe','movAte'].forEach(id=>$(id).addEventListener('input',render));
 function download(name,data,type){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([data],{type}));a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
 $('exportar').addEventListener('click',()=>{const rows=[['Codigo','Produto','Unidade','Saldo','Minimo'],...db.products.map(p=>[p.code,p.name,p.unit,balance(p.id),p.min??''])];download('saldos-cd-aparecida.csv','\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n'),'text/csv;charset=utf-8')});
 $('backup').addEventListener('click',()=>download('backup-cd-aparecida.json',JSON.stringify(db,null,2),'application/json'));
+function exportExcel(){
+ if(!window.XLSX){alert('A biblioteca Excel não carregou. Verifique a conexão com a internet e tente novamente.');return}
+ const saldos=db.products.map(p=>({'Código interno':p.code||'','Código de barras':p.barcode||'','Produto':p.name,'Unidade':p.unit,'Saldo atual':balance(p.id),'Estoque mínimo':p.min??''}));
+ const movimentos=db.moves.map(m=>{const p=product(m.productId);return {'Data':m.date,'Código':p?.code||'','Produto':p?.name||'','Tipo':typeName(m.type),'Quantidade':m.qty,'Unidade':p?.unit||'','Documento':m.doc||'','Lote':m.lot||'','Validade':m.expiry||'','Observação':m.obs||''}});
+ const wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(saldos),'Saldos');
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(movimentos),'Movimentacoes');
+ XLSX.writeFile(wb,'relatorio-estoque-cd-aparecida.xlsx');
+}
+function downloadExcelTemplate(){
+ if(!window.XLSX){alert('A biblioteca Excel não carregou. Verifique a conexão com a internet.');return}
+ const wb=XLSX.utils.book_new();
+ const rows=[{'Código interno':'1.03.01.001.00','Código de barras':'7890000000000','Produto':'Produto de exemplo','Unidade':'kg','Estoque mínimo':10,'Saldo inicial':25}];
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Importacao');
+ XLSX.writeFile(wb,'modelo-importacao-estoque.xlsx');
+}
+function normalizeHeader(v){return String(v??'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').trim().toLowerCase()}
+async function importExcelFile(file){
+ if(!window.XLSX){alert('A biblioteca Excel não carregou. Verifique a conexão com a internet.');return}
+ const data=await file.arrayBuffer();
+ const wb=XLSX.read(data,{type:'array'});
+ const ws=wb.Sheets[wb.SheetNames[0]];
+ if(!ws)throw new Error('A planilha está vazia.');
+ const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
+ if(!rows.length)throw new Error('A planilha não possui linhas para importar.');
+ const keys=Object.keys(rows[0]);const map={};
+ keys.forEach(k=>map[normalizeHeader(k)]=k);
+ const col=(...names)=>names.map(n=>map[normalizeHeader(n)]).find(Boolean);
+ const cCode=col('Código interno','Codigo interno','Código','Codigo'),cBarcode=col('Código de barras','Codigo de barras','EAN','GTIN'),cName=col('Produto','Nome'),cUnit=col('Unidade','Un.');
+ const cMin=col('Estoque mínimo','Minimo'),cBal=col('Saldo inicial','Saldo');
+ if(!cCode||!cName||!cUnit)throw new Error('Colunas obrigatórias: Código, Produto e Unidade. Use o modelo disponibilizado.');
+ const accepted=['kg','un','cx','pct','L'];
+ const prepared=[],seen=new Set();
+ for(let i=0;i<rows.length;i++){
+  const r=rows[i],code=String(r[cCode]??'').trim(),name=String(r[cName]??'').trim(),unit=String(r[cUnit]??'').trim();
+  if(!code&&!name&&!unit)continue;
+  const barcode=cBarcode?normalizeBarcode(r[cBarcode]):'';if(!code||!name||!unit)throw new Error('Linha '+(i+2)+': código interno, produto e unidade são obrigatórios.');if(barcode&&(db.products.some(p=>normalizeBarcode(p.barcode)===barcode)||prepared.some(p=>p.barcode===barcode)))throw new Error('Linha '+(i+2)+': código de barras duplicado.');
+  if(!accepted.includes(unit))throw new Error('Linha '+(i+2)+': unidade inválida. Use kg, un, cx, pct ou L.');
+  if(seen.has(code)||db.products.some(p=>p.code===code))throw new Error('Código duplicado: '+code+'. Nenhum dado foi importado.');
+  seen.add(code);
+  const minRaw=cMin?String(r[cMin]??'').trim():'';
+  const balRaw=cBal?String(r[cBal]??'').trim():'';
+  const min=minRaw===''?null:Number(minRaw.replace(',','.'));
+  const bal=balRaw===''?0:Number(balRaw.replace(',','.'));
+  if((min!==null&&(!Number.isFinite(min)||min<0))||!Number.isFinite(bal)||bal<0)throw new Error('Linha '+(i+2)+': estoque mínimo ou saldo inicial inválido.');
+  prepared.push({code,barcode,name,unit,min,bal});
+ }
+ if(!prepared.length)throw new Error('Nenhuma linha válida encontrada.');
+ if(!confirm('Serão cadastrados '+prepared.length+' produto(s). Saldos iniciais maiores que zero serão registrados como ajustes. Os dados existentes não serão substituídos. Continuar?'))return;
+ const date=new Date().toLocaleDateString('en-CA');
+ prepared.forEach(x=>{
+  const id=crypto.randomUUID();
+  db.products.push({id,code:x.code,barcode:x.barcode,name:x.name,unit:x.unit,min:x.min});
+  if(x.bal>0)db.moves.push({id:crypto.randomUUID(),productId:id,type:'ajuste',qty:x.bal,date,doc:'IMPORTAÇÃO EXCEL',lot:'',expiry:'',obs:'Saldo inicial importado de planilha',created:Date.now()});
+ });
+ save(prepared.length+' produto(s) importado(s) com sucesso.');
+}
+$('exportarExcel').addEventListener('click',exportExcel);
+$('modeloExcel').addEventListener('click',downloadExcelTemplate);
+$('btnImportarExcel').addEventListener('click',()=>$('importarExcel').click());
+$('importarExcel').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{await importExcelFile(file)}catch(err){alert('Importação cancelada: '+err.message)}e.target.value=''});
+
 $('btnRestaurar').addEventListener('click',()=>$('restaurar').click());
 $('restaurar').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.products)||!Array.isArray(x.moves))throw Error();if(confirm('Restaurar substituirá os dados atuais deste navegador. Deseja continuar?')){db=x;save('Backup restaurado.')}}catch(err){alert('Arquivo de backup inválido.')}e.target.value=''});
+$('exportarMov').addEventListener('click',()=>{const rows=[['Data','Codigo','Produto','Tipo','Quantidade','Unidade','Documento','Lote','Validade','Observacao'],...db.moves.map(m=>{const p=product(m.productId);return [m.date,p?.code||'',p?.name||'',typeName(m.type),m.qty,p?.unit||'',m.doc||'',m.lot||'',m.expiry||'',m.obs||'']})];download('movimentacoes-cd-aparecida.csv','\\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\\n'),'text/csv;charset=utf-8')});
+$('imprimir').addEventListener('click',()=>{document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));$('relatorios').classList.add('active');window.print();});
+function renderExpiry(){const todayISO=new Date().toLocaleDateString('en-CA');const limit=new Date();limit.setDate(limit.getDate()+30);const limitISO=limit.toLocaleDateString('en-CA');const lots=db.moves.filter(m=>m.type==='entrada'&&m.expiry&&m.lot).filter(m=>m.expiry<=limitISO).sort((a,b)=>a.expiry.localeCompare(b.expiry));$('alertasValidade').innerHTML=lots.length?lots.map(m=>{const p=product(m.productId);const expired=m.expiry<todayISO;return '<div class="alert-exp '+(expired?'expired':'')+'"><strong>'+(expired?'Vencido':'Próximo do vencimento')+'</strong> · '+esc(p?.name||'Produto')+' · Lote '+esc(m.lot)+' · Validade '+esc(m.expiry.split('-').reverse().join('/'))+'</div>'}).join(''):'Nenhum lote com validade nos próximos 30 dias.'}
+const baseRender=render;render=function(){baseRender();renderExpiry()};
 load();render();
+
+let scanner=null,scanTarget=null,scanStarting=false;
+function normalizeBarcode(v){return String(v??'').trim().replace(/\\s+/g,'')}
+async function stopScanner(){
+ if(scanner){try{await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}
+ $('scannerModal').classList.add('hidden');$('reader').innerHTML='';scanStarting=false;
+}
+async function startScanner(target){
+ if(scanStarting)return;
+ scanStarting=true;scanTarget=target;$('scannerModal').classList.remove('hidden');$('scanStatus').textContent='Solicitando acesso à câmera...';
+ try{
+  if(!window.isSecureContext)throw new Error('A câmera exige HTTPS. Abra o sistema pelo GitHub Pages.');
+  if(!navigator.mediaDevices?.getUserMedia)throw new Error('Este navegador não oferece acesso à câmera.');
+  if(!window.Html5Qrcode)throw new Error('O leitor não carregou. Verifique a conexão com a internet e atualize a página.');
+  scanner=new Html5Qrcode('reader');
+  const cameras=await Html5Qrcode.getCameras();
+  if(!cameras.length)throw new Error('Nenhuma câmera foi encontrada.');
+  const cam=cameras.find(c=>/back|traseira|environment/i.test(c.label))||cameras[cameras.length-1];
+  await scanner.start(cam.id,{fps:10,qrbox:{width:260,height:150},aspectRatio:1.7},async decoded=>{
+   const code=normalizeBarcode(decoded);
+   if(!code)return;
+   if(scanTarget==='cadastro'){
+    $('codigoBarras').value=code;$('scanStatus').textContent='Código de barras lido: '+code;
+   }else{
+    const p=db.products.find(p=>normalizeBarcode(p.barcode)===code);
+    if(p){$('produtoMov').value=p.id;$('scanStatus').textContent='Produto localizado: '+p.name}
+    else{$('scanStatus').textContent='Código '+code+' não cadastrado. Cadastre o produto primeiro.';return}
+   }
+   await stopScanner();
+  },()=>{});
+  $('scanStatus').textContent='Câmera ativa. Aponte para o código de barras.';
+ }catch(err){
+  $('scanStatus').textContent=err.message||'Não foi possível iniciar a câmera.';
+  if(scanner){try{await scanner.stop()}catch(e){}try{await scanner.clear()}catch(e){}scanner=null}
+  scanStarting=false;
+ }
+}
+$('scanCadastro').addEventListener('click',()=>startScanner('cadastro'));
+$('scanMov').addEventListener('click',()=>startScanner('movimento'));
+$('closeScanner').addEventListener('click',stopScanner);
+$('scannerModal').addEventListener('click',e=>{if(e.target===$('scannerModal'))stopScanner()});
 </script>
 </body></html>
