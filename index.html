@@ -15,7 +15,7 @@
 </style>
 </head>
 <body>
-<header class="top"><div><h1>📦 Estoque CD Aparecida</h1><p>Controle de produtos, movimentações e conferência de saldos</p></div><span class="tag">Versão 1.1 · melhorias</span></header>
+<header class="top"><div><h1>📦 Estoque CD Aparecida</h1><p>Controle de produtos, movimentações e conferência de saldos</p></div><span class="tag">Versão 1.2 · Excel</span></header>
 <main class="wrap">
 <div class="notice"><strong>Atenção:</strong> esta versão salva os dados neste navegador e neste dispositivo. Ainda não há sincronização entre computadores ou usuários. Faça exportações de backup regularmente.</div>
 <nav class="nav" aria-label="Navegação">
@@ -66,11 +66,12 @@
 </div>
 </section>
 <section id="relatorios" class="section">
-<div class="panel"><h2>Relatório de saldos</h2><div class="toolbar"><input id="buscaRel" placeholder="Filtrar produtos..."><button id="exportar">Exportar saldos CSV</button><button class="secondary" id="exportarMov">Exportar movimentações CSV</button><button class="secondary" id="imprimir">Imprimir relatório</button><button class="secondary" id="backup">Baixar backup JSON</button><label class="actions"><input type="file" id="restaurar" accept=".json,application/json" hidden><button class="secondary" type="button" id="btnRestaurar">Restaurar backup</button></label></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Produto</th><th>Un.</th><th>Saldo atual</th><th>Mínimo</th><th>Situação</th></tr></thead><tbody id="listaRel"></tbody></table></div></div>
+<div class="panel"><h2>Relatório de saldos</h2><div class="toolbar"><input id="buscaRel" placeholder="Filtrar produtos..."><button id="exportar">Exportar saldos CSV</button><button class="secondary" id="exportarMov">Exportar movimentações CSV</button><button class="secondary" id="imprimir">Imprimir relatório</button><button class="secondary" id="backup">Baixar backup JSON</button><button class="secondary" id="exportarExcel">Exportar Excel (.xlsx)</button><button class="secondary" id="modeloExcel">Baixar modelo Excel</button><label class="actions"><input type="file" id="importarExcel" accept=".xlsx,.xls,.csv" hidden><button class="secondary" type="button" id="btnImportarExcel">Importar Excel</button></label><label class="actions"><input type="file" id="restaurar" accept=".json,application/json" hidden><button class="secondary" type="button" id="btnRestaurar">Restaurar backup</button></label></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Produto</th><th>Un.</th><th>Saldo atual</th><th>Mínimo</th><th>Situação</th></tr></thead><tbody id="listaRel"></tbody></table></div></div>
 <div class="panel" style="margin-top:14px"><h2>Cuidados com os dados</h2><p class="muted">O saldo é calculado a partir do saldo inicial zero e das movimentações lançadas neste sistema. Antes de usar oficialmente, cadastre os produtos, confira o saldo físico e lance um ajuste inicial validado. Não use este protótipo como fonte única de dados fiscais ou contábeis.</p></div>
 </section>
 <div class="status" id="status" role="status">Pronto.</div>
 </main>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script>
 const KEY='cd-aparecida-v1';
 let db={products:[],moves:[]};
@@ -115,6 +116,68 @@ $('listaProdutos').addEventListener('click',e=>{const id=e.target.dataset.delete
 function download(name,data,type){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([data],{type}));a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
 $('exportar').addEventListener('click',()=>{const rows=[['Codigo','Produto','Unidade','Saldo','Minimo'],...db.products.map(p=>[p.code,p.name,p.unit,balance(p.id),p.min??''])];download('saldos-cd-aparecida.csv','\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n'),'text/csv;charset=utf-8')});
 $('backup').addEventListener('click',()=>download('backup-cd-aparecida.json',JSON.stringify(db,null,2),'application/json'));
+function exportExcel(){
+ if(!window.XLSX){alert('A biblioteca Excel não carregou. Verifique a conexão com a internet e tente novamente.');return}
+ const saldos=db.products.map(p=>({'Código':p.code||'','Produto':p.name,'Unidade':p.unit,'Saldo atual':balance(p.id),'Estoque mínimo':p.min??''}));
+ const movimentos=db.moves.map(m=>{const p=product(m.productId);return {'Data':m.date,'Código':p?.code||'','Produto':p?.name||'','Tipo':typeName(m.type),'Quantidade':m.qty,'Unidade':p?.unit||'','Documento':m.doc||'','Lote':m.lot||'','Validade':m.expiry||'','Observação':m.obs||''}});
+ const wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(saldos),'Saldos');
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(movimentos),'Movimentacoes');
+ XLSX.writeFile(wb,'relatorio-estoque-cd-aparecida.xlsx');
+}
+function downloadExcelTemplate(){
+ if(!window.XLSX){alert('A biblioteca Excel não carregou. Verifique a conexão com a internet.');return}
+ const wb=XLSX.utils.book_new();
+ const rows=[{'Código':'EXEMPLO-001','Produto':'Produto de exemplo','Unidade':'kg','Estoque mínimo':10,'Saldo inicial':25}];
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Importacao');
+ XLSX.writeFile(wb,'modelo-importacao-estoque.xlsx');
+}
+function normalizeHeader(v){return String(v??'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').trim().toLowerCase()}
+async function importExcelFile(file){
+ if(!window.XLSX){alert('A biblioteca Excel não carregou. Verifique a conexão com a internet.');return}
+ const data=await file.arrayBuffer();
+ const wb=XLSX.read(data,{type:'array'});
+ const ws=wb.Sheets[wb.SheetNames[0]];
+ if(!ws)throw new Error('A planilha está vazia.');
+ const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false});
+ if(!rows.length)throw new Error('A planilha não possui linhas para importar.');
+ const keys=Object.keys(rows[0]);const map={};
+ keys.forEach(k=>map[normalizeHeader(k)]=k);
+ const col=(...names)=>names.map(n=>map[normalizeHeader(n)]).find(Boolean);
+ const cCode=col('Código','Codigo'),cName=col('Produto','Nome'),cUnit=col('Unidade','Un.');
+ const cMin=col('Estoque mínimo','Minimo'),cBal=col('Saldo inicial','Saldo');
+ if(!cCode||!cName||!cUnit)throw new Error('Colunas obrigatórias: Código, Produto e Unidade. Use o modelo disponibilizado.');
+ const accepted=['kg','un','cx','pct','L'];
+ const prepared=[],seen=new Set();
+ for(let i=0;i<rows.length;i++){
+  const r=rows[i],code=String(r[cCode]??'').trim(),name=String(r[cName]??'').trim(),unit=String(r[cUnit]??'').trim();
+  if(!code&&!name&&!unit)continue;
+  if(!code||!name||!unit)throw new Error('Linha '+(i+2)+': código, produto e unidade são obrigatórios.');
+  if(!accepted.includes(unit))throw new Error('Linha '+(i+2)+': unidade inválida. Use kg, un, cx, pct ou L.');
+  if(seen.has(code)||db.products.some(p=>p.code===code))throw new Error('Código duplicado: '+code+'. Nenhum dado foi importado.');
+  seen.add(code);
+  const minRaw=cMin?String(r[cMin]??'').trim():'';
+  const balRaw=cBal?String(r[cBal]??'').trim():'';
+  const min=minRaw===''?null:Number(minRaw.replace(',','.'));
+  const bal=balRaw===''?0:Number(balRaw.replace(',','.'));
+  if((min!==null&&(!Number.isFinite(min)||min<0))||!Number.isFinite(bal)||bal<0)throw new Error('Linha '+(i+2)+': estoque mínimo ou saldo inicial inválido.');
+  prepared.push({code,name,unit,min,bal});
+ }
+ if(!prepared.length)throw new Error('Nenhuma linha válida encontrada.');
+ if(!confirm('Serão cadastrados '+prepared.length+' produto(s). Saldos iniciais maiores que zero serão registrados como ajustes. Os dados existentes não serão substituídos. Continuar?'))return;
+ const date=new Date().toLocaleDateString('en-CA');
+ prepared.forEach(x=>{
+  const id=crypto.randomUUID();
+  db.products.push({id,code:x.code,name:x.name,unit:x.unit,min:x.min});
+  if(x.bal>0)db.moves.push({id:crypto.randomUUID(),productId:id,type:'ajuste',qty:x.bal,date,doc:'IMPORTAÇÃO EXCEL',lot:'',expiry:'',obs:'Saldo inicial importado de planilha',created:Date.now()});
+ });
+ save(prepared.length+' produto(s) importado(s) com sucesso.');
+}
+$('exportarExcel').addEventListener('click',exportExcel);
+$('modeloExcel').addEventListener('click',downloadExcelTemplate);
+$('btnImportarExcel').addEventListener('click',()=>$('importarExcel').click());
+$('importarExcel').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{await importExcelFile(file)}catch(err){alert('Importação cancelada: '+err.message)}e.target.value=''});
+
 $('btnRestaurar').addEventListener('click',()=>$('restaurar').click());
 $('restaurar').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!Array.isArray(x.products)||!Array.isArray(x.moves))throw Error();if(confirm('Restaurar substituirá os dados atuais deste navegador. Deseja continuar?')){db=x;save('Backup restaurado.')}}catch(err){alert('Arquivo de backup inválido.')}e.target.value=''});
 $('exportarMov').addEventListener('click',()=>{const rows=[['Data','Codigo','Produto','Tipo','Quantidade','Unidade','Documento','Lote','Validade','Observacao'],...db.moves.map(m=>{const p=product(m.productId);return [m.date,p?.code||'',p?.name||'',typeName(m.type),m.qty,p?.unit||'',m.doc||'',m.lot||'',m.expiry||'',m.obs||'']})];download('movimentacoes-cd-aparecida.csv','\\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\\n'),'text/csv;charset=utf-8')});
