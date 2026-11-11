@@ -23,7 +23,7 @@ Sistema web de controle de estoque para cadastro de produtos, entradas, saídas,
 - Exportação CSV de saldos e de movimentações.
 - Exportação Excel (`.xlsx`) com abas separadas para saldos e movimentações.
 - Modelo Excel para cadastro em lote de produtos e saldos iniciais.
-- Leitura de código de barras pela câmera do celular no cadastro e na seleção de produtos para movimentação.
+- Leitura de código de barras pela câmera do celular e conversão por tabela de correspondência para o código interno do Teknisa.
 - Importação de planilhas `.xlsx`, `.xls` e `.csv` (primeira aba/planilha), com validação de código, unidade e quantidades; os produtos existentes não são sobrescritos.
 - Impressão do relatório de saldos.
 - Backup e restauração em JSON.
@@ -36,7 +36,7 @@ Sistema web de controle de estoque para cadastro de produtos, entradas, saídas,
 
 
 ## Importação e exportação Excel
-- Para importar produtos, baixe o **Modelo Excel**, preencha Código, Produto e Unidade. Estoque mínimo e Saldo inicial são opcionais.
+- Para importar produtos, baixe o **Modelo Excel**, preencha Código interno, Código de barras, Produto e Unidade. Código de barras, Estoque mínimo e Saldo inicial são opcionais.
 - Unidades aceitas: `kg`, `un`, `cx`, `pct` e `L`.
 - A importação adiciona produtos novos; códigos já cadastrados ou repetidos são rejeitados. O saldo inicial é lançado como ajuste com a data da importação.
 - A exportação gera um arquivo `.xlsx` com as abas **Saldos** e **Movimentacoes**.
@@ -46,7 +46,8 @@ Sistema web de controle de estoque para cadastro de produtos, entradas, saídas,
 
 ## Leitor de código de barras pelo celular
 - Abra o sistema por HTTPS e permita o acesso à câmera do navegador.
-- No cadastro, use **Ler código** para preencher o código de barras do produto.
-- Na movimentação, use **Ler código** para localizar e selecionar um produto já cadastrado.
-- O código lido precisa estar salvo no campo Código do produto. A leitura não cria um cadastro automaticamente.
+- Cada produto possui dois identificadores separados: **Código interno (Teknisa)** e **Código de barras (EAN/GTIN)**.
+- No cadastro, use **Ler código** para preencher o campo de código de barras; informe separadamente o código interno utilizado no Teknisa.
+- Na movimentação, use **Ler código**. O sistema consulta o código de barras cadastrado e seleciona o produto pelo vínculo com seu código interno.
+- Para vincular muitos produtos de uma vez, importe uma planilha com as colunas Código interno, Código de barras, Produto e Unidade. O código de barras é opcional para produtos sem identificação.
 - A leitura usa a câmera do dispositivo e uma biblioteca carregada pela internet. Se a câmera não abrir, confira a permissão do navegador e a conexão.
