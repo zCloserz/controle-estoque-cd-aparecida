@@ -208,7 +208,7 @@ async function startScanner(target){
    const code=normalizeBarcode(decoded);
    if(!code)return;
    if(scanTarget==='cadastro'){
-    $('codigo').value=code;$('scanStatus').textContent='Código lido: '+code;
+    $('codigoBarras').value=code;$('scanStatus').textContent='Código de barras lido: '+code;
    }else{
     const p=db.products.find(p=>normalizeBarcode(p.barcode)===code);
     if(p){$('produtoMov').value=p.id;$('scanStatus').textContent='Produto localizado: '+p.name}
