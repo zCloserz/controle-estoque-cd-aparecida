@@ -23,6 +23,7 @@ Sistema web de controle de estoque para cadastro de produtos, entradas, saídas,
 - Exportação CSV de saldos e de movimentações.
 - Exportação Excel (`.xlsx`) com abas separadas para saldos e movimentações.
 - Modelo Excel para cadastro em lote de produtos e saldos iniciais.
+- Leitura de código de barras pela câmera do celular no cadastro e na seleção de produtos para movimentação.
 - Importação de planilhas `.xlsx`, `.xls` e `.csv` (primeira aba/planilha), com validação de código, unidade e quantidades; os produtos existentes não são sobrescritos.
 - Impressão do relatório de saldos.
 - Backup e restauração em JSON.
@@ -41,3 +42,11 @@ Sistema web de controle de estoque para cadastro de produtos, entradas, saídas,
 - A exportação gera um arquivo `.xlsx` com as abas **Saldos** e **Movimentacoes**.
 - A biblioteca Excel é carregada por CDN; a importação/exportação `.xlsx` requer conexão com a internet. As funções principais do sistema continuam disponíveis sem essa biblioteca.
 - Antes de importar, confira os dados e faça um backup JSON. Não importe dados reais sem conferência.
+
+
+## Leitor de código de barras pelo celular
+- Abra o sistema por HTTPS e permita o acesso à câmera do navegador.
+- No cadastro, use **Ler código** para preencher o código de barras do produto.
+- Na movimentação, use **Ler código** para localizar e selecionar um produto já cadastrado.
+- O código lido precisa estar salvo no campo Código do produto. A leitura não cria um cadastro automaticamente.
+- A leitura usa a câmera do dispositivo e uma biblioteca carregada pela internet. Se a câmera não abrir, confira a permissão do navegador e a conexão.
