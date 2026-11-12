@@ -1,3 +1,5 @@
+[Reading 232 lines from start (total: 232 lines, 0 remaining)]
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -15,9 +17,24 @@
 </style>
 </head>
 <body>
-<header class="top"><div><h1>📦 Estoque CD Aparecida</h1><p>Controle de produtos, movimentações e conferência de saldos</p></div><span class="tag">Versão 1.1 · Excel</span></header>
+<header class="top"><div><h1>📦 Estoque CD Aparecida</h1><p>Controle de produtos, movimentações e conferência de saldos</p></div><span class="tag">Versão 1.2 · Sincronização online</span></header>
 <main class="wrap">
-<div class="notice"><strong>Atenção:</strong> esta versão salva os dados neste navegador e neste dispositivo. Ainda não há sincronização entre computadores ou usuários. Faça exportações de backup regularmente.</div>
+
+<section class="panel" id="cloudPanel" style="margin-bottom:16px">
+ <h2>Sincronização entre PC e celular</h2>
+ <p class="muted" id="cloudState">Conecte sua conta para ativar a sincronização online.</p>
+ <form id="cloudForm" class="grid" style="align-items:end">
+  <div class="field"><label for="cloudEmail">E-mail da conta</label><input id="cloudEmail" type="email" autocomplete="username" required placeholder="seu e-mail"></div>
+  <div class="field"><label for="cloudPassword">Senha da conta</label><input id="cloudPassword" type="password" autocomplete="current-password" required placeholder="Crie uma senha forte"></div>
+  <div class="actions" style="grid-column:1/-1">
+   <button type="submit" id="cloudLogin">Entrar e sincronizar</button>
+   <button type="button" class="secondary" id="cloudSignup">Criar conta</button>
+   <button type="button" class="secondary hidden" id="cloudLogout">Sair</button>
+  </div>
+ </form>
+ <p class="foot">Use a mesma conta no PC e no celular. Seus dados locais serão mesclados com os dados online no primeiro acesso. Faça backup antes de iniciar.</p>
+</section>
+<div class="notice"><strong>Importante:</strong> a sincronização online só funciona depois de criar as tabelas no Supabase e entrar com a mesma conta nos dois dispositivos.</div>
 <nav class="nav" aria-label="Navegação">
 <button class="active" data-tab="painel">Painel</button><button data-tab="produtos">Produtos</button><button data-tab="movimentos">Movimentações</button><button data-tab="relatorios">Relatórios</button>
 </nav>
@@ -72,16 +89,129 @@
 </section>
 <div class="status" id="status" role="status">Pronto.</div>
 <div id="scannerModal" class="hidden" style="position:fixed;inset:0;z-index:1000;background:#071522dd;padding:18px;display:flex;align-items:center;justify-content:center"><div class="panel" style="width:min(100%,520px);max-height:90vh;overflow:auto"><h2>Leitura de código de barras</h2><p class="muted">Posicione o código dentro da área da câmera. Autorize o acesso quando solicitado.</p><div id="reader" style="width:100%;min-height:220px"></div><p id="scanStatus" class="muted">Aguardando câmera...</p><div class="actions"><button type="button" class="secondary" id="closeScanner">Fechar câmera</button></div></div></div></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 const KEY='cd-aparecida-v1';
+const SUPABASE_URL='https://rrggkejipvsivpjuqgoa.supabase.co';
+const SUPABASE_KEY='sb_publishable_nZ0ASw7fmM7_CJ3DjieSIA_ZticKrQe';
+let supabaseClient=null, cloudSession=null, cloudBusy=false, realtimeChannel=null;
 let db={products:[],moves:[]};
 const $=id=>document.getElementById(id);
 const today=new Date().toLocaleDateString('en-CA');
 $('dataMov').value=today;
 function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(x&&Array.isArray(x.products)&&Array.isArray(x.moves))db=x}catch(e){console.warn(e)}}
-function save(msg='Dados salvos neste navegador.'){localStorage.setItem(KEY,JSON.stringify(db));$('status').textContent=msg;render()}
+function save(msg='Dados salvos neste navegador.'){localStorage.setItem(KEY,JSON.stringify(db));$('status').textContent=msg;render();if(cloudSession)pushLocalToCloud().catch(e=>setCloudState('Erro ao sincronizar: '+(e.message||e)));}
+function setCloudState(message){if($('cloudState'))$('cloudState').textContent=message;}
+function productToRow(p,userId){return {id:p.id,user_id:userId,code:p.code||'',barcode:p.barcode||null,name:p.name,unit:p.unit,min:p.min===''||p.min===undefined?null:p.min};}
+function moveToRow(m,userId){return {id:m.id,user_id:userId,product_id:m.productId,type:m.type,qty:m.qty,date:m.date,doc:m.doc||null,lot:m.lot||null,expiry:m.expiry||null,obs:m.obs||null,created:m.created||Date.now()};}
+function rowToProduct(p){return {id:p.id,code:p.code,barcode:p.barcode||'',name:p.name,unit:p.unit,min:p.min};}
+function rowToMove(m){return {id:m.id,productId:m.product_id,type:m.type,qty:Number(m.qty),date:m.date,doc:m.doc||'',lot:m.lot||'',expiry:m.expiry||'',obs:m.obs||'',created:Number(m.created||0)};}
+async function readCloudData(){
+ const uid=cloudSession.user.id;
+ const [pr,mr]=await Promise.all([
+  supabaseClient.from('products').select('*').eq('user_id',uid),
+  supabaseClient.from('moves').select('*').eq('user_id',uid)
+ ]);
+ if(pr.error)throw pr.error;if(mr.error)throw mr.error;
+ return {products:pr.data||[],moves:mr.data||[]};
+}
+async function replaceFromCloud(){
+ const rows=await readCloudData();
+ db={products:rows.products.map(rowToProduct),moves:rows.moves.map(rowToMove)};
+ localStorage.setItem(KEY,JSON.stringify(db));render();
+ setCloudState('Sincronizado. Seus dados estão atualizados neste dispositivo.');
+}
+async function fullInitialSync(){
+ if(!cloudSession||cloudBusy)return;
+ cloudBusy=true;setCloudState('Sincronizando os dados locais com a nuvem...');
+ try{
+  const uid=cloudSession.user.id;
+  const remote=await readCloudData();
+  const remoteByCode=new Map(remote.products.map(p=>[p.code,p]));
+  const idMap=new Map();
+  const productsToInsert=[];
+  for(const p of db.products){
+   const existing=remoteByCode.get(p.code);
+   if(existing){idMap.set(p.id,existing.id);}
+   else{productsToInsert.push(productToRow(p,uid));}
+  }
+  if(productsToInsert.length){
+   const {error}=await supabaseClient.from('products').upsert(productsToInsert,{onConflict:'id,user_id'});
+   if(error)throw error;
+  }
+  const afterProducts=await readCloudData();
+  const canonicalByCode=new Map(afterProducts.products.map(p=>[p.code,p]));
+  for(const p of db.products){const canonical=canonicalByCode.get(p.code);if(canonical)idMap.set(p.id,canonical.id);}
+  const remoteMoveIds=new Set(afterProducts.moves.map(m=>m.id));
+  const movesToInsert=db.moves.filter(m=>!remoteMoveIds.has(m.id)).map(m=>{
+   const mapped={...m,productId:idMap.get(m.productId)||m.productId};
+   return moveToRow(mapped,uid);
+  });
+  if(movesToInsert.length){
+   const {error}=await supabaseClient.from('moves').upsert(movesToInsert,{onConflict:'id,user_id'});
+   if(error)throw error;
+  }
+  await replaceFromCloud();
+  setCloudState('Sincronização concluída. Use esta mesma conta no outro dispositivo.');
+ }catch(e){setCloudState('Não foi possível sincronizar: '+(e.message||e));throw e;}
+ finally{cloudBusy=false;}
+}
+async function pushLocalToCloud(){
+ if(!cloudSession||cloudBusy)return;
+ cloudBusy=true;
+ try{
+  const uid=cloudSession.user.id;
+  if(db.products.length){
+   const {error}=await supabaseClient.from('products').upsert(db.products.map(p=>productToRow(p,uid)),{onConflict:'id,user_id'});
+   if(error)throw error;
+  }
+  if(db.moves.length){
+   const {error}=await supabaseClient.from('moves').upsert(db.moves.map(m=>moveToRow(m,uid)),{onConflict:'id,user_id'});
+   if(error)throw error;
+  }
+  setCloudState('Sincronizado com a nuvem.');
+ }finally{cloudBusy=false;}
+}
+function subscribeRealtime(){
+ if(realtimeChannel)supabaseClient.removeChannel(realtimeChannel);
+ const uid=cloudSession.user.id;
+ realtimeChannel=supabaseClient.channel('estoque-cd-'+uid)
+  .on('postgres_changes',{event:'*',schema:'public',table:'products',filter:'user_id=eq.'+uid},()=>{if(!cloudBusy)replaceFromCloud().catch(e=>setCloudState('Falha ao atualizar: '+e.message));})
+  .on('postgres_changes',{event:'*',schema:'public',table:'moves',filter:'user_id=eq.'+uid},()=>{if(!cloudBusy)replaceFromCloud().catch(e=>setCloudState('Falha ao atualizar: '+e.message));})
+  .subscribe();
+}
+async function activateCloudSession(session){
+ cloudSession=session;
+ if(!session){setCloudState('Desconectado. Os dados ficam apenas neste dispositivo.');$('cloudLogin').classList.remove('hidden');$('cloudSignup').classList.remove('hidden');$('cloudLogout').classList.add('hidden');return;}
+ $('cloudLogin').classList.add('hidden');$('cloudSignup').classList.add('hidden');$('cloudLogout').classList.remove('hidden');
+ setCloudState('Conta conectada: '+(session.user.email||'usuário')+'. Preparando sincronização...');
+ await fullInitialSync();subscribeRealtime();
+}
+async function initCloud(){
+ if(!window.supabase?.createClient){setCloudState('Não foi possível carregar o serviço de sincronização. Verifique a internet.');return;}
+ supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+ const {data,error}=await supabaseClient.auth.getSession();
+ if(error)throw error;
+ await activateCloudSession(data.session);
+ supabaseClient.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>activateCloudSession(session).catch(e=>setCloudState('Erro: '+e.message)),0);});
+}
+$('cloudForm').addEventListener('submit',async e=>{
+ e.preventDefault();const email=$('cloudEmail').value.trim(),password=$('cloudPassword').value;
+ if(!supabaseClient){alert('A conexão ainda está carregando. Atualize a página.');return;}
+ $('cloudLogin').disabled=true;
+ try{const {error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;}
+ catch(err){alert('Não foi possível entrar: '+err.message);}
+ finally{$('cloudLogin').disabled=false;}
+});
+$('cloudSignup').addEventListener('click',async()=>{
+ const email=$('cloudEmail').value.trim(),password=$('cloudPassword').value;
+ if(!email||password.length<8){alert('Informe um e-mail e uma senha com pelo menos 8 caracteres.');return;}
+ try{const {data,error}=await supabaseClient.auth.signUp({email,password});if(error)throw error;if(!data.session)alert('Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre no sistema.');}
+ catch(err){alert('Não foi possível criar a conta: '+err.message);}
+});
+$('cloudLogout').addEventListener('click',async()=>{if(supabaseClient)await supabaseClient.auth.signOut();});
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function qty(n){return Number(n||0).toLocaleString('pt-BR',{maximumFractionDigits:3})}
 function product(id){return db.products.find(p=>p.id===id)}
@@ -187,6 +317,7 @@ $('imprimir').addEventListener('click',()=>{document.querySelectorAll('.section'
 function renderExpiry(){const todayISO=new Date().toLocaleDateString('en-CA');const limit=new Date();limit.setDate(limit.getDate()+30);const limitISO=limit.toLocaleDateString('en-CA');const lots=db.moves.filter(m=>m.type==='entrada'&&m.expiry&&m.lot).filter(m=>m.expiry<=limitISO).sort((a,b)=>a.expiry.localeCompare(b.expiry));$('alertasValidade').innerHTML=lots.length?lots.map(m=>{const p=product(m.productId);const expired=m.expiry<todayISO;return '<div class="alert-exp '+(expired?'expired':'')+'"><strong>'+(expired?'Vencido':'Próximo do vencimento')+'</strong> · '+esc(p?.name||'Produto')+' · Lote '+esc(m.lot)+' · Validade '+esc(m.expiry.split('-').reverse().join('/'))+'</div>'}).join(''):'Nenhum lote com validade nos próximos 30 dias.'}
 const baseRender=render;render=function(){baseRender();renderExpiry()};
 load();render();
+initCloud().catch(e=>setCloudState('Falha ao iniciar sincronização: '+(e.message||e)));
 
 let scanner=null,scanTarget=null,scanStarting=false;
 function normalizeBarcode(v){return String(v??'').trim().replace(/\\s+/g,'')}
@@ -230,3 +361,7 @@ $('closeScanner').addEventListener('click',stopScanner);
 $('scannerModal').addEventListener('click',e=>{if(e.target===$('scannerModal'))stopScanner()});
 </script>
 </body></html>
+
+[executed on device: zCLOSER (fe9db097-636b-4fa4-a08e-4c4795f19ab1)]
+
+[executed on device: zCLOSER (fe9db097-636b-4fa4-a08e-4c4795f19ab1)]
